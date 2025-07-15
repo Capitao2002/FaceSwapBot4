@@ -3,12 +3,12 @@ FROM python:3.10-slim
 WORKDIR /app
 COPY . /app
 
-# Instalar dependências do sistema (corrige o erro do OpenCV)
+# Instalar bibliotecas de sistema necessárias para o OpenCV
 RUN apt-get update && apt-get install -y \
     libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
