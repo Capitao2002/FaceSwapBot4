@@ -7,7 +7,7 @@ from bot_config import TELEGRAM_TOKEN
 
 app = Flask(__name__)
 bot = Bot(token=TELEGRAM_TOKEN)
-dispatcher = Dispatcher(bot, None, workers=0, use_context=True)
+dispatcher = Dispatcher(bot, None, workers=1, use_context=True)
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -19,18 +19,18 @@ def handle_video(update, context):
     video_path = os.path.join(UPLOAD_DIR, f"{update.message.message_id}_video.mp4")
     video_file.download(video_path)
     context.user_data['video_path'] = video_path
-    update.message.reply_text("Vídeo recebido! Agora envie a foto do rosto para a troca.")
+    update.message.reply_text("Vídeo recebido! Agora envie a foto do rosto.")
 
 def handle_photo(update, context):
     photo_file = update.message.photo[-1].get_file()
     photo_path = os.path.join(UPLOAD_DIR, f"{update.message.message_id}_face.jpg")
     photo_file.download(photo_path)
     context.user_data['face_path'] = photo_path
-    update.message.reply_text("Foto recebida! Processando a troca de rosto...")
+    update.message.reply_text("Foto recebida! Processando...")
 
     video_path = context.user_data.get('video_path')
     if not video_path:
-        update.message.reply_text("Por favor, envie primeiro o vídeo.")
+        update.message.reply_text("Por favor, envie o vídeo primeiro.")
         return
 
     output_path = os.path.join(UPLOAD_DIR, f"{update.message.message_id}_output.mp4")
@@ -52,6 +52,3 @@ def webhook():
 @app.route("/")
 def index():
     return "Bot de troca de rosto FaceFusion está rodando!"
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
